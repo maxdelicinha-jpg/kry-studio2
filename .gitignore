@@ -1,0 +1,19 @@
+# Temp files
+_compress_log.txt
+_compress_tmp.mp4
+# Agent Instructions.md
+
+# Original uncompressed video folders (files renamed/replaced by compressed versions)
+home medias/
+homes videos apresentation/
+videos ad/
+videos motions/
+videos yt shorts/
+
+# Original duplicate files inside videos-ad (not renamed to ad-*.mp4)
+videos-ad/#*
+videos-ad/R2*
+videos-ad/projeto*
+
+# Original file in motion folder with spaces
+videos-motions/landscap mtion/hxh port.mp4

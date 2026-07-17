@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KEVEN — Video Editor & Motion Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --border: #1e1e1e;
+      --accent: #008cff;
+      --text: #f0f0f0;
+      --muted: #666;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* ── Loader ── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      transition: opacity .6s ease, visibility .6s ease;
+    }
+    #loader.hidden { opacity: 0; visibility: hidden; }
+    #loader-logo {
+      width: clamp(64px, 14vw, 96px);
+      height: clamp(64px, 14vw, 96px);
+      object-fit: contain;
+      margin-bottom: 18px;
+    }
+    #loader-brand {
+      font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+      font-weight: 700;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 22px;
+    }
+    #loader-bar-wrap {
+      width: min(280px, 55vw);
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    #loader-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width .05s linear;
+    }
+    #loader-pct {
+      font-size: .72rem;
+      letter-spacing: .15em;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Top Nav ── */
+    .topnav-wrap {
+      position: fixed;
+      top: 16px;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: center;
+      padding: 0 20px;
+      pointer-events: none;
+    }
+    .topnav {
+      display: flex;
+      align-items: center;
+      background: rgba(8,12,18,.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 16px;
+      padding: 7px 7px 7px 20px;
+      width: 100%;
+      max-width: 820px;
+      pointer-events: all;
+      gap: 4px;
+    }
+    /* Logo */
+    .topnav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+      margin-right: 4px;
+    }
+    .logo-mark-img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .logo-name {
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    /* Nav links */
+    .topnav-links {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      justify-content: center;
+      gap: 2px;
+    }
+    .topnav-link {
+      font-size: .78rem;
+      letter-spacing: .05em;
+      color: rgba(240,240,240,.65);
+      text-decoration: none;
+      padding: 8px 18px;
+      border-radius: 10px;
+      transition: background .2s, color .2s;
+      white-space: nowrap;
+    }
+    .topnav-link:hover { background: rgba(255,255,255,.07); color: var(--text); }
+    /* Right side */
+    .topnav-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    /* Language toggle */
+    .lang-wrap {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .lang-btn {
+      font-family: var(--font);
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(240,240,240,.45);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: background .2s, color .2s;
+    }
+    .lang-btn.active {
+      background: rgba(255,255,255,.13);
+      color: var(--text);
+    }
+    /* CTA */
+    .topnav-cta {
+      display: inline-flex;
+      align-items: center;
+      padding: 11px 22px;
+      background: var(--accent);
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: opacity .2s;
+      white-space: nowrap;
+    }
+    .topnav-cta:hover { opacity: .85; }
+    @media (max-width: 640px) {
+      .topnav-links { display: none; }
+      .logo-name { display: none; }
+      .topnav { padding: 7px; }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      min-height: auto;
+      display: flex;
+      align-items: flex-start;
+      overflow: hidden;
+    }
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8,8,8,.72);
+      z-index: 1;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 74px 0 52px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 100px;
+      padding: 7px 18px;
+      font-size: .68rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(240,240,240,.85);
+      margin-bottom: 56px;
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: #22c55e;
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: blink 2.2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,.5); }
+      50% { opacity: .5; box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+    }
+    .hero-headline {
+      line-height: 0.95;
+      letter-spacing: -.02em;
+      max-width: 1100px;
+    }
+    .hero-sans {
+      display: block;
+      font-family: var(--font);
+      font-size: clamp(2.2rem, 5.5vw, 5.5rem);
+      font-weight: 900;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .hero-serif {
+      display: block;
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(2.4rem, 6vw, 6rem);
+      color: var(--text);
+      letter-spacing: -.01em;
+    }
+    .hero-line {
+      display: block;
+      margin: 8px auto 0;
+      width: min(680px, 90%);
+      height: 18px;
+      position: relative;
+      overflow: visible;
+    }
+    .hero-line svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .hero-sub {
+      margin-top: 16px;
+      font-size: .95rem;
+      color: rgba(240,240,240,.55);
+      max-width: 500px;
+      line-height: 1.75;
+      text-align: center;
+    }
+    .hero-actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 36px;
+      background: #fff;
+      color: #000;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: opacity .2s;
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+    }
+    .btn-primary:hover { opacity: .88; }
+    .btn-text {
+      display: inline-block;
+      font-size: .82rem;
+      letter-spacing: .06em;
+      color: rgba(240,240,240,.7);
+      text-decoration: underline;
+      text-underline-offset: 5px;
+      text-decoration-color: rgba(240,240,240,.3);
+      text-decoration-thickness: 1px;
+      cursor: pointer;
+      transition: color .2s, text-decoration-color .2s;
+    }
+    .btn-text:hover { color: var(--text); text-decoration-color: rgba(240,240,240,.7); }
+    .btn-ghost {
+      display: inline-block;
+      padding: 16px 36px;
+      background: transparent;
+      color: var(--text);
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: border-color .2s, color .2s;
+      border-radius: 12px;
+    }
+    .btn-ghost:hover { border-color: var(--text); }
+
+    /* ── Section base ── */
+    section { padding: 100px 0; border-top: 1px solid var(--border); }
+    .section-label {
+      font-size: .7rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 48px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 100px;
+    }
+    .section-label span { color: var(--accent); margin-right: 8px; }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -.01em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    /* ── Works ── */
+    .works-category { margin-top: 64px; }
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .category-tag {
+      font-size: .65rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+    .category-count { font-size: .7rem; color: var(--muted); letter-spacing: .08em; }
+
+    /* 2-col vertical grid (Ad/VSL) */
+    .works-2col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      max-width: 560px;
+    }
+    /* 3-col horizontal grid (Motions) */
+    .works-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    /* Horizontal scroll strip (YT Shorts) */
+    .works-scroll {
+      display: flex;
+      gap: 2px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .works-scroll::-webkit-scrollbar { display: none; }
+
+    .work-card {
+      position: relative;
+      background: var(--surface);
+      overflow: hidden;
+      cursor: pointer;
+      flex-shrink: 0;
+      border-radius: 14px;
+    }
+    .work-card.vertical  { aspect-ratio: 9/16; }
+    .work-card.horizontal { aspect-ratio: 16/9; }
+    /* Shorts: fixed height so they all line up in the scroll strip */
+    .works-scroll .work-card { height: 420px; width: auto; }
+
+    .work-card video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: filter .4s ease;
+    }
+    .work-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.72) 0%, transparent 52%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 18px;
+    }
+    .work-tag {
+      font-size: .6rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .work-title {
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 720px) {
+      .works-2col { max-width: 100%; }
+      .works-3col { grid-template-columns: 1fr 1fr; }
+      .works-scroll .work-card { height: 300px; }
+    }
+
+    /* ── Projects Grid ── */
+    .proj-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 48px;
+    }
+    .proj-card {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--surface);
+      cursor: pointer;
+    }
+    .proj-card.landscape { aspect-ratio: 16/9; }
+    .proj-card video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .proj-card:hover video { transform: scale(1.03); }
+    .proj-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.82) 0%, transparent 55%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px 18px;
+    }
+    .proj-tag {
+      font-size: .6rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 5px;
+    }
+    .proj-title {
+      font-size: .92rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    /* Portrait carousel */
+    .proj-carousel-outer {
+      overflow: hidden;
+      border-radius: 14px;
+    }
+    .proj-carousel {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      height: 100%;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .proj-carousel::-webkit-scrollbar { display: none; }
+    .proj-card.portrait {
+      height: 100%;
+      width: auto;
+      aspect-ratio: 9/16;
+      flex-shrink: 0;
+      border-radius: 14px;
+    }
+    @media (max-width: 720px) {
+      .proj-grid { grid-template-columns: 1fr; }
+      .proj-carousel-outer { height: 380px; }
+    }
+
+    /* ── Services ── */
+    .services-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 32px;
+      margin-bottom: 64px;
+    }
+    .services-label {
+      font-size: .65rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .services-title {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.1;
+      text-transform: none;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .service-card {
+      background: #0c0c0c;
+      padding: 32px 28px 28px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: border-color .3s;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(380px circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,.07), transparent 65%);
+      opacity: 0;
+      transition: opacity .35s;
+      pointer-events: none;
+    }
+    .service-card:hover { border-color: rgba(255,255,255,.12); }
+    .service-card:hover::before { opacity: 1; }
+    .service-num {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      font-size: 4.5rem;
+      font-weight: 800;
+      color: rgba(255,255,255,.035);
+      line-height: 1;
+      letter-spacing: -.03em;
+      pointer-events: none;
+      user-select: none;
+    }
+    .service-name {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+    .svc-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .service-desc {
+      font-size: .83rem;
+      color: rgba(140,170,210,.75);
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+    .svc-explore {
+      font-size: .72rem;
+      letter-spacing: .08em;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .svc-explore:hover { color: var(--text); }
+    .services-cta { margin-top: 64px; text-align: center; }
+    .services-cta p { font-size: .9rem; color: var(--muted); margin-bottom: 24px; }
+    @media (max-width: 860px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 540px) {
+      .services-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Industries ── */
+    .industries-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      margin-top: 48px;
+    }
+    .industry-item {
+      padding: 12px 20px;
+      border: 1px solid var(--border);
+      font-size: .75rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color .2s, border-color .2s;
+      border-radius: 100px;
+    }
+    .industry-item:hover { color: var(--text); border-color: var(--muted); }
+
+    /* ── Stats ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      background: transparent;
+      margin-top: 80px;
+    }
+    .stat-item {
+      background: var(--surface);
+      padding: 40px 32px;
+      text-align: center;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+    .stat-num {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -.02em;
+    }
+    .stat-label { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+
+    /* ── FAQ ── */
+    .faq-list { margin-top: 48px; }
+    .faq-item {
+      border-top: 1px solid var(--border);
+    }
+    .faq-item:last-child { border-bottom: 1px solid var(--border); }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      padding: 24px 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transition: color .2s;
+    }
+    .faq-question:hover { color: var(--accent); }
+    .faq-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      position: relative;
+      transition: transform .3s;
+    }
+    .faq-icon::before, .faq-icon::after {
+      content: '';
+      position: absolute;
+      background: currentColor;
+      border-radius: 2px;
+    }
+    .faq-icon::before { width: 100%; height: 2px; top: 50%; left: 0; transform: translateY(-50%); }
+    .faq-icon::after { width: 2px; height: 100%; top: 0; left: 50%; transform: translateX(-50%); transition: transform .3s, opacity .3s; }
+    .faq-item.open .faq-icon::after { transform: translateX(-50%) rotate(90deg); opacity: 0; }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .35s ease;
+    }
+    .faq-answer-inner {
+      padding: 0 0 24px;
+      font-size: .9rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 680px;
+    }
+
+    /* ── Contact ── */
+    .contact-section {
+      text-align: center;
+      padding: 120px 0;
+    }
+    .contact-section .section-title { margin-bottom: 16px; }
+    .contact-sub { font-size: 1rem; color: var(--muted); margin-bottom: 48px; }
+    .contact-card-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px;
+      text-decoration: none;
+      color: var(--text);
+      transition: background .2s, border-color .2s;
+    }
+    .contact-row:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); }
+    .contact-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-icon svg { width: 22px; height: 22px; }
+    .contact-icon.email { background: rgba(0,140,255,.18); }
+    .contact-icon.email svg { fill: #008cff; }
+    .contact-icon.discord { background: rgba(88,101,242,.22); }
+    .contact-icon.discord svg { fill: #5865f2; }
+    .contact-icon.instagram { background: rgba(228,64,95,.18); }
+    .contact-icon.instagram svg { fill: url(#igGrad); }
+    .contact-row-name {
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      flex: 1;
+      text-align: left;
+    }
+    .contact-row-handle {
+      font-size: .8rem;
+      color: var(--muted);
+      letter-spacing: .03em;
+    }
+    .contact-row-arrow {
+      width: 18px;
+      height: 18px;
+      opacity: .4;
+      flex-shrink: 0;
+    }
+    .reply-note { font-size: .75rem; color: var(--muted); margin-top: 24px; letter-spacing: .05em; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-brand { font-size: .8rem; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+    .footer-copy { font-size: .7rem; color: var(--muted); }
+
+    /* ── Reveal animations ── */
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      nav a { display: none; }
+      .hero { min-height: 85vh; }
+      .services-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader">
+    <img id="loader-logo" src="logo.png" alt="KRY Studio logo">
+    <div id="loader-brand">KRY Studio</div>
+    <div id="loader-bar-wrap"><div id="loader-bar"></div></div>
+    <div id="loader-pct">00%</div>
+  </div>
+
+  <!-- Top Nav -->
+  <div class="topnav-wrap">
+    <nav class="topnav">
+      <!-- Logo -->
+      <a href="#" class="topnav-logo">
+        <img src="logo.png" alt="kRy Studio" class="logo-mark-img">
+        <span class="logo-name">kRy Studio</span>
+      </a>
+      <!-- Nav links -->
+      <div class="topnav-links">
+        <a href="motion.html" class="topnav-link" data-i18n="nav.motion">Motion</a>
+        <a href="advsl.html" class="topnav-link" data-i18n="nav.advsl">AD/VSL</a>
+        <a href="ytvideos.html" class="topnav-link" data-i18n="nav.ytvideos">YT Videos</a>
+      </div>
+      <!-- Right: language + CTA -->
+      <div class="topnav-right">
+        <div class="lang-wrap">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="pt">PT</button>
+        </div>
+        <a href="#contact" class="topnav-cta" data-i18n="nav.cta">Free Trial</a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero" style="border-top: none;">
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="home-bg.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="container hero-inner">
+      <div class="status-badge reveal">
+        <span class="status-dot"></span>
+        <span data-i18n="hero.badge">Available for new projects</span>
+      </div>
+      <h1 class="hero-headline reveal">
+        <span class="hero-sans" data-i18n="hero.sans">Editing that grows</span>
+        <span class="hero-serif" data-i18n="hero.serif">your audience.</span>
+        <span class="hero-line" aria-hidden="true">
+          <svg viewBox="0 0 680 18" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="5" x2="680" y2="5" stroke="url(#lineGrad)" stroke-width="1.2" opacity="0.9"/>
+            <line x1="0" y1="11" x2="680" y2="11" stroke="url(#lineGrad)" stroke-width="0.5" opacity="0.45"/>
+            <defs>
+              <linearGradient id="lineGrad" x1="0" y1="0" x2="680" y2="0" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#001a4d" stop-opacity="0"/>
+                <stop offset="18%" stop-color="#0050cc" stop-opacity="0.7"/>
+                <stop offset="50%" stop-color="#3b82f6" stop-opacity="1"/>
+                <stop offset="82%" stop-color="#0050cc" stop-opacity="0.7"/>
+                <stop offset="100%" stop-color="#001a4d" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+      </h1>
+      <p class="hero-sub reveal" data-i18n="hero.sub">
+        Strategic storytelling built for YouTube growth, short-form virality, and brand-defining motion work — all delivered fast.
+      </p>
+      <div class="hero-actions reveal">
+        <a href="#works" class="btn-primary" data-i18n="hero.cta">See My Work ↓</a>
+        <a href="#contact" class="btn-text" data-i18n="hero.cta2">Get in touch</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Selected Works -->
+  <section id="works">
+    <div class="container">
+      <p class="section-label reveal"><span>01</span> <span data-i18n="works.label">Selected Works</span></p>
+      <h2 class="section-title reveal" data-i18n="works.title">Recent projects</h2>
+
+      <div class="proj-grid">
+
+        <!-- Row 1: two landscape -->
+        <div class="proj-card landscape reveal" data-href="ytvideos.html">
+          <video src="pres-land-apple.mp4" autoplay muted loop playsinline></video>
+          <div class="proj-overlay">
+            <span class="proj-tag">Short Form</span>
+            <div class="proj-title">Apple vs Ferrari — Design Mistake</div>
+          </div>
+        </div>
+
+        <div class="proj-card landscape reveal" data-href="motion.html">
+          <video src="pres-land-productive.mp4" autoplay muted loop playsinline></video>
+          <div class="proj-overlay">
+            <span class="proj-tag">Motion</span>
+            <div class="proj-title">Be Productive</div>
+          </div>
+        </div>
+
+        <!-- Row 2: landscape + portrait carousel -->
+        <div class="proj-card landscape reveal" data-href="motion.html">
+          <video src="pres-land-hxh.mp4" autoplay muted loop playsinline></video>
+          <div class="proj-overlay">
+            <span class="proj-tag">Motion</span>
+            <div class="proj-title">HXH — Portfolio Edit</div>
+          </div>
+        </div>
+
+        <div class="proj-carousel-outer reveal">
+          <div class="proj-carousel">
+            <div class="proj-card portrait" data-href="ytvideos.html">
+              <video src="pres-port-cars.mp4" autoplay muted loop playsinline></video>
+              <div class="proj-overlay">
+                <span class="proj-tag">Short Form</span>
+                <div class="proj-title">23 Cars Crash onto Roof</div>
+              </div>
+            </div>
+            <div class="proj-card portrait" data-href="ytvideos.html">
+              <video src="pres-port-bugatti.mp4" autoplay muted loop playsinline></video>
+              <div class="proj-overlay">
+                <span class="proj-tag">Short Form</span>
+                <div class="proj-title">Bugatti into the Lake</div>
+              </div>
+            </div>
+            <div class="proj-card portrait" data-href="ytvideos.html">
+              <video src="pres-port-porsche.mp4" autoplay muted loop playsinline></video>
+              <div class="proj-overlay">
+                <span class="proj-tag">Short Form</span>
+                <div class="proj-title">Police Porsche</div>
+              </div>
+            </div>
+            <div class="proj-card portrait" data-href="ytvideos.html">
+              <video src="pres-port-finn216.mp4" autoplay muted loop playsinline></video>
+              <div class="proj-overlay">
+                <span class="proj-tag">Short Form</span>
+                <div class="proj-title">Finn — Project #216</div>
+              </div>
+            </div>
+            <div class="proj-card portrait" data-href="ytvideos.html">
+              <video src="pres-port-finn217.mp4" autoplay muted loop playsinline></video>
+              <div class="proj-overlay">
+                <span class="proj-tag">Short Form</span>
+                <div class="proj-title">Finn — Project #217</div>
+              </div>
+            </div>
+            <div class="proj-card portrait" data-href="motion.html">
+              <video src="pres-port-folder.mp4" autoplay muted loop playsinline></video>
+              <div class="proj-overlay">
+                <span class="proj-tag">Motion</span>
+                <div class="proj-title">Folder Edit</div>
+              </div>
+            </div>
+            <div class="proj-card portrait" data-href="motion.html">
+              <video src="pres-port-pilula.mp4" autoplay muted loop playsinline></video>
+              <div class="proj-overlay">
+                <span class="proj-tag">Motion</span>
+                <div class="proj-title">Pílula After</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- hidden anchor targets kept for nav links -->
+      <div id="ad-vsl" style="position:relative;top:-80px"></div>
+      <div id="motion" style="position:relative;top:-80px"></div>
+      <div id="shorts" style="position:relative;top:-80px"></div>
+
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="container">
+      <div class="services-header">
+        <div>
+          <p class="services-label reveal" data-i18n="services.label">Explore</p>
+          <h2 class="services-title reveal" data-i18n="services.title">Every niche.<br>One studio.</h2>
+        </div>
+      </div>
+      <div class="services-grid">
+
+        <div class="service-card reveal">
+          <div class="service-num">01</div>
+          <div class="service-name">
+            <span class="svc-dot" style="background:#008cff"></span>
+            <span data-i18n="svc1.name">Long-form YouTube</span>
+          </div>
+          <p class="service-desc" data-i18n="svc1.desc">Strategic storytelling designed specifically for the YouTube algorithm — hooks, pacing, and retention arcs that keep viewers watching.</p>
+          <a href="#contact" class="svc-explore" data-i18n="svc.explore">Explore ↗</a>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-num">02</div>
+          <div class="service-name">
+            <span class="svc-dot" style="background:#a855f7"></span>
+            <span data-i18n="svc2.name">Short-form &amp; Reels</span>
+          </div>
+          <p class="service-desc" data-i18n="svc2.desc">TikTok, Instagram Reels, and YouTube Shorts engineered for infinite scrolling — punchy cuts and viral-first structure.</p>
+          <a href="#contact" class="svc-explore" data-i18n="svc.explore">Explore ↗</a>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-num">03</div>
+          <div class="service-name">
+            <span class="svc-dot" style="background:#ef4444"></span>
+            <span data-i18n="svc3.name">UGC &amp; Ads</span>
+          </div>
+          <p class="service-desc" data-i18n="svc3.desc">Conversion-focused ad editing that blends authentic UGC energy with performance-driven structure to drive clicks.</p>
+          <a href="#contact" class="svc-explore" data-i18n="svc.explore">Explore ↗</a>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-num">04</div>
+          <div class="service-name">
+            <span class="svc-dot" style="background:#ef4444"></span>
+            <span data-i18n="svc4.name">Motion Graphics</span>
+          </div>
+          <p class="service-desc" data-i18n="svc4.desc">Custom animated titles, lower thirds, transitions, and brand-consistent motion packages built in After Effects.</p>
+          <a href="#contact" class="svc-explore" data-i18n="svc.explore">Explore ↗</a>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-num">05</div>
+          <div class="service-name">
+            <span class="svc-dot" style="background:#22c55e"></span>
+            <span data-i18n="svc5.name">Color Grading</span>
+          </div>
+          <p class="service-desc" data-i18n="svc5.desc">Cinematic color science — from LOG footage to final delivery-ready grade in any style: filmic, clean, or hyper-stylized.</p>
+          <a href="#contact" class="svc-explore" data-i18n="svc.explore">Explore ↗</a>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-num">06</div>
+          <div class="service-name">
+            <span class="svc-dot" style="background:#f97316"></span>
+            <span data-i18n="svc6.name">Sound Design</span>
+          </div>
+          <p class="service-desc" data-i18n="svc6.desc">SFX layering, music selection, and audio mix that makes your videos feel professional at every touchpoint.</p>
+          <a href="#contact" class="svc-explore" data-i18n="svc.explore">Explore ↗</a>
+        </div>
+
+      </div>
+      <div class="services-cta reveal">
+        <p data-i18n="services.cta.text">Not sure what you need? Let's talk — first edit is on me.</p>
+        <a href="#contact" class="btn-primary" data-i18n="services.cta.btn">Get a Free Trial</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-item reveal">
+        <div class="stat-num">200+</div>
+        <div class="stat-label" data-i18n="stat1">Videos Delivered</div>
+      </div>
+      <div class="stat-item reveal">
+        <div class="stat-num">50+</div>
+        <div class="stat-label" data-i18n="stat2">Clients Served</div>
+      </div>
+      <div class="stat-item reveal">
+        <div class="stat-num">48h</div>
+        <div class="stat-label" data-i18n="stat3">Avg. Turnaround</div>
+      </div>
+      <div class="stat-item reveal">
+        <div class="stat-num">∞</div>
+        <div class="stat-label" data-i18n="stat4">Revisions Included</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Industries -->
+  <section id="industries">
+    <div class="container">
+      <p class="section-label reveal"><span>03</span> <span data-i18n="industries.label">Industry Coverage</span></p>
+      <h2 class="section-title reveal" data-i18n="industries.title">I edit across every niche</h2>
+      <div class="industries-list reveal">
+        <div class="industry-item" data-i18n="ind1">Podcasts</div>
+        <div class="industry-item" data-i18n="ind2">SaaS &amp; Tech</div>
+        <div class="industry-item" data-i18n="ind3">Gaming</div>
+        <div class="industry-item" data-i18n="ind4">Fitness</div>
+        <div class="industry-item" data-i18n="ind5">Finance</div>
+        <div class="industry-item" data-i18n="ind6">Education</div>
+        <div class="industry-item" data-i18n="ind7">Lifestyle</div>
+        <div class="industry-item" data-i18n="ind8">True Crime</div>
+        <div class="industry-item" data-i18n="ind9">Travel</div>
+        <div class="industry-item" data-i18n="ind10">E-Commerce</div>
+        <div class="industry-item" data-i18n="ind11">Real Estate</div>
+        <div class="industry-item" data-i18n="ind12">Beauty &amp; Fashion</div>
+        <div class="industry-item" data-i18n="ind13">Music</div>
+        <div class="industry-item" data-i18n="ind14">Documentary</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <p class="section-label reveal"><span>04</span> <span data-i18n="faq.label">Support</span></p>
+      <h2 class="section-title reveal" data-i18n="faq.title">Frequently asked</h2>
+      <div class="faq-list">
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            <span data-i18n="faq1.q">What software do you use?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner" data-i18n="faq1.a">
+              I work in Premiere Pro for primary editing, After Effects for motion graphics and VFX, DaVinci Resolve for color grading, and Audition for audio mixing. I can deliver in any format or resolution your platform requires.
+            </div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            <span data-i18n="faq2.q">How many revisions are included?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner" data-i18n="faq2.a">
+              Unlimited revisions until you're completely happy. I don't cap revisions — my goal is a final product you're proud of, and I won't close a project until we get there.
+            </div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            <span data-i18n="faq3.q">What's the typical turnaround time?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner" data-i18n="faq3.a">
+              Standard long-form videos are delivered within 48–72 hours of receiving all raw footage. Short-form content (Reels, TikToks, Shorts) is usually back within 24 hours. Rush delivery is available — just ask.
+            </div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            <span data-i18n="faq4.q">Do you also edit short-form content?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner" data-i18n="faq4.a">
+              Yes — short-form is actually one of my specialties. I approach TikTok, Reels, and Shorts with a different framework than long-form: tight hooks, rapid pacing, and native-feeling formats that don't look like repurposed YouTube clips.
+            </div>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            <span data-i18n="faq5.q">Do you work with international clients?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner" data-i18n="faq5.a">
+              Absolutely. I work with creators and brands worldwide. File delivery is handled through Google Drive or Dropbox, and communication happens via email or Discord — no timezone is a dealbreaker.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="contact-section" style="border-top: 1px solid var(--border);">
+    <div class="container">
+      <p class="section-label reveal" style="justify-content: center; display: flex;"><span>05</span> <span data-i18n="contact.label">Let's Work Together</span></p>
+      <h2 class="section-title reveal" data-i18n="contact.title">Ready to start?</h2>
+      <p class="contact-sub reveal" data-i18n="contact.sub">Reach out and get a free trial edit — no commitment, no credit card.</p>
+      <!-- Instagram gradient def (hidden) -->
+      <svg width="0" height="0" style="position:absolute">
+        <defs>
+          <linearGradient id="igGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#f09433"/>
+            <stop offset="25%" stop-color="#e6683c"/>
+            <stop offset="50%" stop-color="#dc2743"/>
+            <stop offset="75%" stop-color="#cc2366"/>
+            <stop offset="100%" stop-color="#bc1888"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div class="contact-card-wrap reveal">
+
+        <a href="https://discord.com/users/1410643243837689886" target="_blank" rel="noopener" class="contact-row">
+          <div class="contact-icon discord">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+          </div>
+          <span class="contact-row-name" data-i18n="contact.discord">Discord</span>
+          <span class="contact-row-handle">Send a message</span>
+          <svg class="contact-row-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+        </a>
+
+        <a href="http://instagram.com/kevensx.edit" target="_blank" rel="noopener" class="contact-row">
+          <div class="contact-icon instagram">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </div>
+          <span class="contact-row-name">Instagram</span>
+          <span class="contact-row-handle">@kevensx.edit</span>
+          <svg class="contact-row-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+        </a>
+
+      </div>
+      <p class="reply-note reveal" data-i18n="contact.reply">Usually replies within 30 minutes</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <span class="footer-brand">Keven</span>
+      <span class="footer-copy" data-i18n="footer.copy">© 2026 — Video Editor &amp; Motion Designer</span>
+    </div>
+  </footer>
+
+  <script>
+    // ── Loader ──
+    const loaderEl = document.getElementById('loader');
+    const barEl = document.getElementById('loader-bar');
+    const pctEl = document.getElementById('loader-pct');
+    let pct = 0;
+    const tick = setInterval(() => {
+      pct += Math.random() * 12 + 4;
+      if (pct >= 100) {
+        pct = 100;
+        clearInterval(tick);
+        barEl.style.width = '100%';
+        pctEl.textContent = '100%';
+        setTimeout(() => loaderEl.classList.add('hidden'), 400);
+      } else {
+        barEl.style.width = pct + '%';
+        pctEl.textContent = String(Math.floor(pct)).padStart(2, '0') + '%';
+      }
+    }, 80);
+
+    // ── Scroll reveal ──
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── Project card navigation ──
+    document.querySelectorAll('.proj-card[data-href]').forEach(card => {
+      let startX = 0, startY = 0;
+      card.addEventListener('mousedown', e => { startX = e.clientX; startY = e.clientY; });
+      card.addEventListener('click', e => {
+        if (Math.abs(e.clientX - startX) < 6 && Math.abs(e.clientY - startY) < 6) {
+          window.location.href = card.dataset.href;
+        }
+      });
+      card.style.cursor = 'pointer';
+    });
+
+    // ── Service card spotlight glow ──
+    document.querySelectorAll('.service-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+        card.style.setProperty('--my', ((e.clientY - r.top)  / r.height * 100) + '%');
+      });
+    });
+
+    // ── FAQ accordion ──
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const answer = item.querySelector('.faq-answer');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => {
+          i.classList.remove('open');
+          i.querySelector('.faq-answer').style.maxHeight = '0';
+        });
+        if (!isOpen) {
+          item.classList.add('open');
+          answer.style.maxHeight = answer.scrollHeight + 'px';
+        }
+      });
+    });
+
+    // ── i18n ──
+    const translations = {
+      en: {
+        // nav
+        'nav.motion':       'Motion',
+        'nav.advsl':        'AD/VSL',
+        'nav.ytvideos':     'YT Videos',
+        'nav.cta':          'Free Trial',
+        // hero
+        'hero.badge':       'Available for new projects',
+        'hero.sans':        'Editing that grows',
+        'hero.serif':       'your audience.',
+        'hero.sub':         'Strategic storytelling built for YouTube growth, short-form virality, and brand-defining motion work — all delivered fast.',
+        'hero.cta':         'See My Work ↓',
+        'hero.cta2':        'Get in touch',
+        // works
+        'works.label':      'Selected Works',
+        'works.title':      'Recent projects',
+        'cat.ad':           'Ad / VSL',
+        'cat.ad.count':     '2 videos',
+        'cat.motion':       'Motion Graphics',
+        'cat.motion.count': '3 videos',
+        'cat.shorts':       'YT Shorts',
+        'cat.shorts.count': '5 videos — scroll to see more',
+        // services
+        'services.label':   'Explore',
+        'services.title':   'Every niche.<br>One studio.',
+        'svc.explore':      'Explore ↗',
+        'svc1.name':        'Long-form YouTube',
+        'svc1.desc':        'Strategic storytelling designed specifically for the YouTube algorithm — hooks, pacing, and retention arcs that keep viewers watching.',
+        'svc2.name':        'Short-form & Reels',
+        'svc2.desc':        'TikTok, Instagram Reels, and YouTube Shorts engineered for infinite scrolling — punchy cuts and viral-first structure.',
+        'svc3.name':        'UGC & Ads',
+        'svc3.desc':        'Conversion-focused ad editing that blends authentic UGC energy with performance-driven structure to drive clicks.',
+        'svc4.name':        'Motion Graphics',
+        'svc4.desc':        'Custom animated titles, lower thirds, transitions, and brand-consistent motion packages built in After Effects.',
+        'svc5.name':        'Color Grading',
+        'svc5.desc':        'Cinematic color science — from LOG footage to final delivery-ready grade in any style: filmic, clean, or hyper-stylized.',
+        'svc6.name':        'Sound Design',
+        'svc6.desc':        'SFX layering, music selection, and audio mix that makes your videos feel professional at every touchpoint.',
+        'services.cta.text':'Not sure what you need? Let\'s talk — first edit is on me.',
+        'services.cta.btn': 'Get a Free Trial',
+        // stats
+        'stat1':            'Videos Delivered',
+        'stat2':            'Clients Served',
+        'stat3':            'Avg. Turnaround',
+        'stat4':            'Revisions Included',
+        // industries
+        'industries.label': 'Industry Coverage',
+        'industries.title': 'I edit across every niche',
+        'ind1':  'Podcasts',       'ind2':  'SaaS & Tech',
+        'ind3':  'Gaming',         'ind4':  'Fitness',
+        'ind5':  'Finance',        'ind6':  'Education',
+        'ind7':  'Lifestyle',      'ind8':  'True Crime',
+        'ind9':  'Travel',         'ind10': 'E-Commerce',
+        'ind11': 'Real Estate',    'ind12': 'Beauty & Fashion',
+        'ind13': 'Music',          'ind14': 'Documentary',
+        // faq
+        'faq.label':  'Support',
+        'faq.title':  'Frequently asked',
+        'faq1.q': 'What software do you use?',
+        'faq1.a': 'I work in Premiere Pro for primary editing, After Effects for motion graphics and VFX, DaVinci Resolve for color grading, and Audition for audio mixing. I can deliver in any format or resolution your platform requires.',
+        'faq2.q': 'How many revisions are included?',
+        'faq2.a': 'Unlimited revisions until you\'re completely happy. I don\'t cap revisions — my goal is a final product you\'re proud of, and I won\'t close a project until we get there.',
+        'faq3.q': 'What\'s the typical turnaround time?',
+        'faq3.a': 'Standard long-form videos are delivered within 48–72 hours of receiving all raw footage. Short-form content (Reels, TikToks, Shorts) is usually back within 24 hours. Rush delivery is available — just ask.',
+        'faq4.q': 'Do you also edit short-form content?',
+        'faq4.a': 'Yes — short-form is actually one of my specialties. I approach TikTok, Reels, and Shorts with a different framework than long-form: tight hooks, rapid pacing, and native-feeling formats that don\'t look like repurposed YouTube clips.',
+        'faq5.q': 'Do you work with international clients?',
+        'faq5.a': 'Absolutely. I work with creators and brands worldwide. File delivery is handled through Google Drive or Dropbox, and communication happens via email or Discord — no timezone is a dealbreaker.',
+        // contact
+        'contact.label':  'Let\'s Work Together',
+        'contact.title':  'Ready to start?',
+        'contact.sub':    'Reach out and get a free trial edit — no commitment, no credit card.',
+        'contact.email':  '✉ Email Me',
+        'contact.discord':'Discord',
+        'contact.reply':  'Usually replies within 30 minutes',
+        // footer
+        'footer.copy':    '© 2026 — Video Editor & Motion Designer',
+      },
+      pt: {
+        // nav
+        'nav.motion':       'Motion',
+        'nav.advsl':        'AD/VSL',
+        'nav.ytvideos':     'YT Vídeos',
+        'nav.cta':          'Teste Grátis',
+        // hero
+        'hero.badge':       'Disponível para novos projetos',
+        'hero.sans':        'Edição que faz crescer',
+        'hero.serif':       'sua audiência.',
+        'hero.sub':         'Narrativa estratégica para crescimento no YouTube, viralidade no curta-metragem e motion design — tudo entregue rápido.',
+        'hero.cta':         'Ver Meus Trabalhos ↓',
+        'hero.cta2':        'Entre em contato',
+        // works
+        'works.label':      'Trabalhos Selecionados',
+        'works.title':      'Projetos recentes',
+        'cat.ad':           'Anúncio / VSL',
+        'cat.ad.count':     '2 vídeos',
+        'cat.motion':       'Motion Graphics',
+        'cat.motion.count': '3 vídeos',
+        'cat.shorts':       'YT Shorts',
+        'cat.shorts.count': '5 vídeos — role para ver mais',
+        // services
+        'services.label':   'Explorar',
+        'services.title':   'Todo nicho.<br>Um estúdio.',
+        'svc.explore':      'Explorar ↗',
+        'svc1.name':        'YouTube Longa Duração',
+        'svc1.desc':        'Narrativa estratégica pensada especificamente para o algoritmo do YouTube — ganchos, ritmo e arcos de retenção que mantêm o espectador assistindo.',
+        'svc2.name':        'Curta Duração & Reels',
+        'svc2.desc':        'TikTok, Instagram Reels e YouTube Shorts criados para o scroll infinito — cortes rápidos e estrutura viral.',
+        'svc3.name':        'UGC & Anúncios',
+        'svc3.desc':        'Edição de anúncios focada em conversão que une energia autêntica de UGC com estrutura orientada a resultados.',
+        'svc4.name':        'Motion Graphics',
+        'svc4.desc':        'Títulos animados, lower thirds, transições e pacotes de motion consistentes com a marca, criados no After Effects.',
+        'svc5.name':        'Colorização',
+        'svc5.desc':        'Ciência de cor cinematográfica — do material LOG ao grade final pronto para entrega, em qualquer estilo.',
+        'svc6.name':        'Design de Som',
+        'svc6.desc':        'Camadas de SFX, seleção musical e mixagem de áudio que fazem seus vídeos soarem profissionais em cada detalhe.',
+        'services.cta.text':'Não sabe o que precisa? Vamos conversar — a primeira edição é por minha conta.',
+        'services.cta.btn': 'Pedir Teste Grátis',
+        // stats
+        'stat1':            'Vídeos Entregues',
+        'stat2':            'Clientes Atendidos',
+        'stat3':            'Prazo Médio',
+        'stat4':            'Revisões Incluídas',
+        // industries
+        'industries.label': 'Nichos Atendidos',
+        'industries.title': 'Edito em todos os nichos',
+        'ind1':  'Podcasts',       'ind2':  'SaaS & Tech',
+        'ind3':  'Games',          'ind4':  'Fitness',
+        'ind5':  'Finanças',       'ind6':  'Educação',
+        'ind7':  'Lifestyle',      'ind8':  'True Crime',
+        'ind9':  'Viagens',        'ind10': 'E-Commerce',
+        'ind11': 'Imóveis',        'ind12': 'Beleza & Moda',
+        'ind13': 'Música',         'ind14': 'Documentário',
+        // faq
+        'faq.label':  'Suporte',
+        'faq.title':  'Perguntas frequentes',
+        'faq1.q': 'Quais softwares você usa?',
+        'faq1.a': 'Trabalho com Premiere Pro para edição principal, After Effects para motion graphics e VFX, DaVinci Resolve para colorização e Audition para mixagem de áudio. Entrego em qualquer formato ou resolução que sua plataforma exigir.',
+        'faq2.q': 'Quantas revisões estão incluídas?',
+        'faq2.a': 'Revisões ilimitadas até você estar completamente satisfeito. Não limito revisões — meu objetivo é um produto final do qual você se orgulhe, e não fecho um projeto enquanto não chegar lá.',
+        'faq3.q': 'Qual é o prazo típico de entrega?',
+        'faq3.a': 'Vídeos de longa duração são entregues em 48–72 horas após receber todo o material bruto. Conteúdo de curta duração (Reels, TikToks, Shorts) geralmente volta em 24 horas. Entrega urgente disponível — é só pedir.',
+        'faq4.q': 'Você também edita conteúdo de curta duração?',
+        'faq4.a': 'Sim — curta duração é uma das minhas especialidades. Abordo TikTok, Reels e Shorts com um framework diferente do longa duração: ganchos rápidos, ritmo acelerado e formatos nativos que não parecem clipes do YouTube reutilizados.',
+        'faq5.q': 'Você trabalha com clientes internacionais?',
+        'faq5.a': 'Com certeza. Trabalho com criadores e marcas do mundo todo. A entrega de arquivos é feita via Google Drive ou Dropbox, e a comunicação acontece por e-mail ou Discord — nenhum fuso horário é problema.',
+        // contact
+        'contact.label':  'Vamos Trabalhar Juntos',
+        'contact.title':  'Pronto para começar?',
+        'contact.sub':    'Entre em contato e ganhe uma edição de teste grátis — sem compromisso, sem cartão de crédito.',
+        'contact.email':  '✉ Me Envie um E-mail',
+        'contact.discord':'Discord',
+        'contact.reply':  'Geralmente responde em 30 minutos',
+        // footer
+        'footer.copy':    '© 2026 — Editor de Vídeo & Motion Designer',
+      }
+    };
+
+    function setLang(code) {
+      const t = translations[code];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (t[key] !== undefined) el.innerHTML = t[key];
+      });
+      document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.lang === code);
+      });
+      document.documentElement.lang = code === 'pt' ? 'pt-BR' : 'en-US';
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => setLang(btn.dataset.lang));
+    });
+  </script>
+</body>
+</html>
