@@ -277,6 +277,9 @@
       gap: 16px;
     }
     .footer-brand { font-size: .8rem; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+    .footer-nav { display: flex; align-items: center; gap: 4px; }
+    .footer-nav-link { font-size: .78rem; letter-spacing: .05em; color: rgba(240,240,240,.55); text-decoration: none; padding: 8px 16px; border-radius: 10px; transition: background .2s, color .2s; }
+    .footer-nav-link:hover { background: rgba(255,255,255,.07); color: var(--text); }
     .footer-copy { font-size: .7rem; color: var(--muted); }
 
     /* ── Reveal ── */
@@ -612,6 +615,11 @@
   <footer>
     <div class="container footer-inner">
       <span class="footer-brand">kRy Studio</span>
+      <nav class="footer-nav">
+        <a href="motion.html" class="footer-nav-link" data-i18n="nav.motion">Motion</a>
+        <a href="advsl.html" class="footer-nav-link" data-i18n="nav.advsl">AD/VSL</a>
+        <a href="ytvideos.html" class="footer-nav-link" data-i18n="nav.ytvideos">YT Videos</a>
+      </nav>
       <span class="footer-copy" data-i18n="footer.copy">© 2025 Keven. All rights reserved.</span>
     </div>
   </footer>
