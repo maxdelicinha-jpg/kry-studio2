@@ -10,10 +10,8 @@ videos ad/
 videos motions/
 videos yt shorts/
 
-# Original duplicate files inside videos-ad (not renamed to ad-*.mp4)
-videos-ad/#*
-videos-ad/R2*
-videos-ad/projeto*
+# Original files in old videos-ad folder (folder renamed to media-vsl)
+videos-ad/
 
 # Original file in motion folder with spaces
 videos-motions/landscap mtion/hxh port.mp4

@@ -362,22 +362,22 @@
       100% { transform: translateX(-50%); }
     }
 
-    .ad-carousel-wrap {
+    .vsl-carousel-wrap {
       margin-left: calc(-50vw + 50%);
       width: 100vw;
       overflow: hidden;
       padding: 8px 0 20px;
     }
 
-    .ad-carousel {
+    .vsl-carousel {
       display: flex;
       gap: 12px;
       width: max-content;
       animation: marquee 44s linear infinite;
     }
-    .ad-carousel:hover { animation-play-state: paused; }
+    .vsl-carousel:hover { animation-play-state: paused; }
 
-    .ad-card {
+    .vsl-card {
       position: relative;
       height: 560px;
       width: auto;
@@ -390,13 +390,13 @@
       cursor: pointer;
       transition: transform .3s ease, border-color .3s;
     }
-    .ad-card:hover {
+    .vsl-card:hover {
       transform: scale(1.03);
       border-color: rgba(255,255,255,.2);
       z-index: 2;
     }
 
-    .ad-card video {
+    .vsl-card video {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -405,7 +405,7 @@
       display: block;
     }
 
-    .ad-card-hover {
+    .vsl-card-hover {
       position: absolute;
       inset: 0;
       background: rgba(0,0,0,.38);
@@ -415,9 +415,9 @@
       opacity: 0;
       transition: opacity .3s;
     }
-    .ad-card:hover .ad-card-hover { opacity: 1; }
+    .vsl-card:hover .vsl-card-hover { opacity: 1; }
 
-    .ad-play-btn {
+    .vsl-play-btn {
       width: 58px;
       height: 58px;
       border-radius: 50%;
@@ -429,7 +429,7 @@
       align-items: center;
       justify-content: center;
     }
-    .ad-play-btn svg { width: 22px; height: 22px; fill: #fff; margin-left: 3px; }
+    .vsl-play-btn svg { width: 22px; height: 22px; fill: #fff; margin-left: 3px; }
 
     /* ── Video modal ── */
     .video-modal {
@@ -480,8 +480,8 @@
     .modal-close:hover { background: rgba(255,255,255,.24); }
 
     @media (max-width: 640px) {
-      .ad-card { height: 400px; }
-      .ad-carousel { gap: 8px; }
+      .vsl-card { height: 400px; }
+      .vsl-carousel { gap: 8px; }
     }
 
     /* ── Proven Results ── */
@@ -636,83 +636,83 @@
     </div><!-- /container -->
 
     <!-- Infinite auto-scrolling marquee carousel -->
-    <div class="ad-carousel-wrap reveal">
-      <div class="ad-carousel" id="adCarousel">
+    <div class="vsl-carousel-wrap reveal">
+      <div class="vsl-carousel" id="vslCarousel">
 
         <!-- Set 1 (original) -->
-        <div class="ad-card" data-src="videos-ad/ad-braz.mp4">
-          <video src="videos-ad/ad-braz.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/braz.mp4">
+          <video src="media-vsl/braz.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-silvestro.mp4">
-          <video src="videos-ad/ad-silvestro.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/silvestro.mp4">
+          <video src="media-vsl/silvestro.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-braz-r189.mp4">
-          <video src="videos-ad/ad-braz-r189.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/braz-r189.mp4">
+          <video src="media-vsl/braz-r189.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-silvestro-r195.mp4">
-          <video src="videos-ad/ad-silvestro-r195.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/silvestro-r195.mp4">
+          <video src="media-vsl/silvestro-r195.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-silvestro-r202.mp4">
-          <video src="videos-ad/ad-silvestro-r202.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/silvestro-r202.mp4">
+          <video src="media-vsl/silvestro-r202.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-silvestro-r216.mp4">
-          <video src="videos-ad/ad-silvestro-r216.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/silvestro-r216.mp4">
+          <video src="media-vsl/silvestro-r216.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-silvestro-leticia.mp4">
-          <video src="videos-ad/ad-silvestro-leticia.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/silvestro-leticia.mp4">
+          <video src="media-vsl/silvestro-leticia.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-braz-r258.mp4">
-          <video src="videos-ad/ad-braz-r258.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/braz-r258.mp4">
+          <video src="media-vsl/braz-r258.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-braz-r259.mp4">
-          <video src="videos-ad/ad-braz-r259.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/braz-r259.mp4">
+          <video src="media-vsl/braz-r259.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
 
         <!-- Set 2 (duplicate for seamless loop) -->
-        <div class="ad-card" data-src="videos-ad/ad-braz.mp4" aria-hidden="true">
-          <video src="videos-ad/ad-braz.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/braz.mp4" aria-hidden="true">
+          <video src="media-vsl/braz.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-silvestro.mp4" aria-hidden="true">
-          <video src="videos-ad/ad-silvestro.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/silvestro.mp4" aria-hidden="true">
+          <video src="media-vsl/silvestro.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-braz-r189.mp4" aria-hidden="true">
-          <video src="videos-ad/ad-braz-r189.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/braz-r189.mp4" aria-hidden="true">
+          <video src="media-vsl/braz-r189.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-silvestro-r195.mp4" aria-hidden="true">
-          <video src="videos-ad/ad-silvestro-r195.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/silvestro-r195.mp4" aria-hidden="true">
+          <video src="media-vsl/silvestro-r195.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-silvestro-r202.mp4" aria-hidden="true">
-          <video src="videos-ad/ad-silvestro-r202.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/silvestro-r202.mp4" aria-hidden="true">
+          <video src="media-vsl/silvestro-r202.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-silvestro-r216.mp4" aria-hidden="true">
-          <video src="videos-ad/ad-silvestro-r216.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/silvestro-r216.mp4" aria-hidden="true">
+          <video src="media-vsl/silvestro-r216.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-silvestro-leticia.mp4" aria-hidden="true">
-          <video src="videos-ad/ad-silvestro-leticia.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/silvestro-leticia.mp4" aria-hidden="true">
+          <video src="media-vsl/silvestro-leticia.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-braz-r258.mp4" aria-hidden="true">
-          <video src="videos-ad/ad-braz-r258.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/braz-r258.mp4" aria-hidden="true">
+          <video src="media-vsl/braz-r258.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
-        <div class="ad-card" data-src="videos-ad/ad-braz-r259.mp4" aria-hidden="true">
-          <video src="videos-ad/ad-braz-r259.mp4" autoplay muted loop playsinline></video>
-          <div class="ad-card-hover"><div class="ad-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        <div class="vsl-card" data-src="media-vsl/braz-r259.mp4" aria-hidden="true">
+          <video src="media-vsl/braz-r259.mp4" autoplay muted loop playsinline></video>
+          <div class="vsl-card-hover"><div class="vsl-play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
         </div>
 
       </div>
@@ -859,7 +859,7 @@
       document.body.style.overflow = '';
     }
 
-    document.querySelectorAll('.ad-card').forEach(card => {
+    document.querySelectorAll('.vsl-card').forEach(card => {
       card.addEventListener('click', () => openModal(card.dataset.src));
     });
     modalClose.addEventListener('click', closeModal);
