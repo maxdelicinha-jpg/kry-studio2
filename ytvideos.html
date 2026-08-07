@@ -808,6 +808,14 @@
     </div>
   </section>
 
+  <!-- YouTube Modal -->
+  <div class="yt-modal-backdrop" id="ytModalBackdrop">
+    <div class="yt-modal" id="ytModal">
+      <button class="yt-modal-close" id="ytModalClose" aria-label="Close">✕</button>
+      <iframe id="ytModalFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer>
     <div class="container footer-inner">
@@ -908,16 +916,28 @@
     }
     loadViewCounts();
 
-    // ── YouTube Card Click → popup window ──
+    // ── YouTube Card Click → in-page modal ──
+    const ytBackdrop = document.getElementById('ytModalBackdrop');
+    const ytFrame    = document.getElementById('ytModalFrame');
+    const ytClose    = document.getElementById('ytModalClose');
+
+    function openYtModal(videoId) {
+      ytFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+      ytBackdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeYtModal() {
+      ytBackdrop.classList.remove('open');
+      ytFrame.src = '';
+      document.body.style.overflow = '';
+    }
+
     document.querySelectorAll('.yt-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const url = card.dataset.url;
-        const w = 420, h = 760;
-        const left = Math.round((screen.width - w) / 2);
-        const top  = Math.round((screen.height - h) / 2);
-        window.open(url, 'ytpreview', `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`);
-      });
+      card.addEventListener('click', () => openYtModal(card.dataset.id));
     });
+    ytClose.addEventListener('click', closeYtModal);
+    ytBackdrop.addEventListener('click', e => { if (e.target === ytBackdrop) closeYtModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeYtModal(); });
 
     // ── Scroll reveal ──
     const observer = new IntersectionObserver(entries => {
