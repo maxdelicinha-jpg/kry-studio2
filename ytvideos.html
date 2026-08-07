@@ -235,10 +235,9 @@
     .mob-drawer-links { display: flex; flex-direction: column; flex: 1; }
     .mob-drawer-link {
       font-size: 1.55rem; font-weight: 600; color: rgba(240,240,240,.45);
-      text-decoration: none; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,.07);
+      text-decoration: none; padding: 18px 0;
       transition: color .2s; letter-spacing: .01em;
     }
-    .mob-drawer-link:last-child { border-bottom: none; }
     .mob-drawer-link:hover, .mob-drawer-link.active { color: var(--text); }
     .mob-drawer-footer { display: flex; flex-direction: column; gap: 14px; align-items: center; padding-top: 28px; }
     .mob-drawer-cta {
@@ -266,7 +265,7 @@
     }
 
     /* ── Contact ── */
-    .contact-section { text-align: center; padding: 100px 0; border-top: 1px solid var(--border); }
+    .contact-section { text-align: center; padding: 100px 0; }
     .contact-section .section-title { font-size: clamp(1.8rem,4vw,3rem); font-weight:800; letter-spacing:-.01em; text-transform:uppercase; margin-bottom:16px; }
     .contact-sub { font-size:1rem; color:var(--muted); margin-bottom:48px; }
     .contact-card-wrap { max-width:680px; margin:0 auto; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:20px; padding:16px; display:flex; flex-direction:column; gap:10px; }
@@ -283,7 +282,7 @@
     .reply-note { font-size:.75rem; color:var(--muted); margin-top:24px; letter-spacing:.05em; }
 
     /* ── Footer ── */
-    footer { border-top: 1px solid var(--border); padding: 32px 0; }
+    footer { padding: 32px 0; }
     .footer-inner {
       display: flex;
       align-items: center;
@@ -353,8 +352,6 @@
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
     }
     .subsection-label {
       font-size: .7rem;

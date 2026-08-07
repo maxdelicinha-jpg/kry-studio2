@@ -311,11 +311,9 @@
       color: rgba(240,240,240,.45);
       text-decoration: none;
       padding: 18px 0;
-      border-bottom: 1px solid rgba(255,255,255,.07);
       transition: color .2s;
       letter-spacing: .01em;
     }
-    .mob-drawer-link:last-child { border-bottom: none; }
     .mob-drawer-link:hover, .mob-drawer-link.active { color: var(--text); }
     .mob-drawer-footer {
       display: flex;
@@ -538,7 +536,7 @@
     .btn-ghost:hover { border-color: var(--text); }
 
     /* ── Section base ── */
-    section { padding: 100px 0; border-top: 1px solid var(--border); }
+    section { padding: 100px 0; }
     .section-label {
       font-size: .7rem;
       letter-spacing: .2em;
@@ -870,10 +868,6 @@
 
     /* ── FAQ ── */
     .faq-list { margin-top: 48px; }
-    .faq-item {
-      border-top: 1px solid var(--border);
-    }
-    .faq-item:last-child { border-bottom: 1px solid var(--border); }
     .faq-question {
       width: 100%;
       background: none;
@@ -990,7 +984,6 @@
 
     /* ── Footer ── */
     footer {
-      border-top: 1px solid var(--border);
       padding: 32px 0;
     }
     .footer-inner {
@@ -1086,7 +1079,7 @@
   </div>
 
   <!-- Hero -->
-  <section class="hero" style="border-top: none;">
+  <section class="hero">
     <div class="container hero-inner">
       <div class="status-badge reveal">
         <span class="status-dot"></span>
@@ -1410,7 +1403,7 @@
   </section>
 
   <!-- Contact -->
-  <section id="contact" class="contact-section" style="border-top: 1px solid var(--border);">
+  <section id="contact" class="contact-section">
     <div class="container">
       <p class="section-label reveal" style="justify-content: center; display: flex;"><span>05</span> <span data-i18n="contact.label">Let's Work Together</span></p>
       <h2 class="section-title reveal" data-i18n="contact.title">Ready to start?</h2>
